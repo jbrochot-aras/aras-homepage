@@ -190,6 +190,8 @@ tbody tr:hover {
 .column1 {
   width: 200px;
   padding-left: 40px;
+  max-width: 200px;
+  word-wrap: break-word;
 }
 
 .column2 {

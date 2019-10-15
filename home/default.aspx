@@ -1,5 +1,7 @@
 <%@ Page Language="c#" %>
 <%@ Import namespace="System.IO"%>
+<%@ Import namespace="System.Security.Principal"%>
+<%@ Import namespace="Microsoft.Web.Administration"%>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -66,7 +68,7 @@
 				Dictionary<string,string> links = new Dictionary<string,string>();
 				links["MyInnovator"] = "https://MyInnovator.com/";
 				links["GitHub"] = "https://github.com/";
-				links["Labs Blog"] = "http://community.aras.com/en/category/technique/aras-labs/";
+				links["Labs Blog"] = "https://community.aras.com/aras-labs/";
 
 				foreach (KeyValuePair<string,string> link in links)
 				{
@@ -92,28 +94,47 @@
 						</thead>
 						<tbody>
 							<%
-								// path where Innovator instances are installed
-								string root = "C:\\Program Files (x86)\\Aras";
-
-								// create a list of folder names you don't want listed
-								List<string> skip = new List<string>();
-								skip.Add("Aras Update");
-								
-								foreach (string file_name in Directory.GetDirectories(root))
-								{
-									string subfoldername = file_name.Substring(root.Length+1);
-									if (!skip.Contains(subfoldername))
+								using (WindowsIdentity.GetCurrent().Impersonate())
+								{									
+									// Get all of the Innovator applications from IIS
+									using (Microsoft.Web.Administration.ServerManager sm = new Microsoft.Web.Administration.ServerManager()) 
 									{
-										string row = "<tr class='table100-head'>";
-										row += "<td class='column1'><a href='../";
-										row += subfoldername + "/' target='_new'>";
-										row += subfoldername + "</a></td><td class='column2'><a href='../";
-										row += subfoldername + "/Client/Scripts/nash.aspx' target='_new'>";
-										row += "Run Nash" + "</a></td>" + "<td class='column3'><a href='../";
-										row += subfoldername + "/?username=admin' target='_new'>";
-										row += "Login as Admin" + "</a></td>" + "</tr>";
+										foreach (var site in sm.Sites) 
+										{
+											// We're using nested loops, but we're also expecting a small number of Sites
+											// (typically only Default Web Site) so it's fine 
+											foreach(var app in site.Applications) 
+											{
+												// Get the root virtual directory (i.e. not the Client, Server, Vault, etc.)
+												string physicalPath = app.VirtualDirectories["/"].PhysicalPath;
+												bool isInnovatorApplication = physicalPath.Trim('\\').EndsWith("Innovator");
+												
+												// Add all of our Innovator applications to a table for easy access
+												if (isInnovatorApplication)
+												{
+													string appName = app.Path.Substring(1);
+													string appPath = ".." + app.Path;
+													string nashPath = appPath + "/Client/Scripts/nash.aspx";
+													string adminPath = appPath + "/?username=admin";
 
-										Response.Write(row);
+													string row = "" +
+														"<tr class='table100-head'>" +
+														"	<td class='column1'>" +
+														"		<a href='{0}' target='_new'>{3}</a>" +
+														"	</td>" +
+														"	<td class='column2'>" + 
+														"		<a href='{1}' target='_new'>Run Nash</a>" +
+														"	</td>" +
+														"	<td class='column3'>" +
+														"		<a href='{2}' target='_new'>Login as Admin</a>" + 
+														"	</td>" +
+														"</tr>";
+													row = string.Format(row, appPath, nashPath, adminPath, appName);
+
+													Response.Write(row);
+												}
+											}
+										}
 									}
 								}
 							%>

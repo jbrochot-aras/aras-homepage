@@ -6,16 +6,24 @@ This project sets up a "homepage" that lists the Aras Innovator instances instal
 
 Release | Notes
 --------|--------
+[v1.1.0](https://github.com/ArasLabs/aras-homepage/releases/tag/v1.1.0) | Added ability to populate instance list from IIS instead of folder.
 [v1.0.0](https://github.com/ArasLabs/aras-homepage/releases/tag/v1.0.0) | First release. Tested on Internet Explorer, Edge, Firefox, Chrome.
 
 #### Supported Aras Versions
 
 Project | Aras
 --------|------
+[v1.1.0](https://github.com/ArasLabs/aras-homepage/releases/tag/v1.1.0) | All Aras Versions
 [v1.0.0](https://github.com/ArasLabs/aras-homepage/releases/tag/v1.0.0) | All Aras Versions
 
 
 ## Installation
+
+### Pre-requisites
+
+This project requires you to have the IIS Management Service feature enabled. You can find this under the **Turn Windows Features on or off** dialog accessible through the Control Panel.
+
+![IIS Management Service](./Screenshots/IIS_Management_Service.png)
 
 ### Install Steps
 
@@ -27,12 +35,6 @@ Project | Aras
     ```(html)
     <!-- Navbar content -->
     <a class="navbar-brand" href="#">SERVER NAME</a> 
-    ```
-5. Set the root variable to the folder where your Aras instances are installed.
-
-    ```(html)
-    // path where Innovator instances are installed
-    string root = "C:\\Program Files (x86)\\Aras";
     ```
 
 5. If there are any subfolders you don't want listed in the table, add them to the skip list.
@@ -75,6 +77,26 @@ Project | Aras
 
 9. Save the `default.aspx` file.
 
+### IIS Setup
+
+This project queries IIS to get a list of the applications it should use to populate the links on the homepage. To avoid a permissions error, you'll need to configure IIS to use Windows Authentation with your user instead of the default IIS user.
+
+1. Open the IIS Manager
+2. In the Connections tree on the left, select **Default Web Site > home**
+3. Select **Authentication** in the features view
+
+![IIS Authentication Menu](./Screenshots/IIS_Authentication.png)
+
+4. Set the Authentication as follows:
+   1. Anonymous Authentication : **Disabled**
+   2. ASP.NET Impersonation : **Enabled**
+   3. Forms Authentication : **Disabled**
+   4. Windows Authentication : **Enabled**
+
+![IIS Authentication Features](./Screenshots/Enable_Windows_Authentication.png);
+
+> Note: With the move towards a Windows authenticated user, you may be prompted for your Windows credentials upon accessing this home page for the first time. This happend when I tested in FireFox and Edge, but did not happen when I tested in Chrome. If you keep the browser session open, you should only need to enter these credentials a single time.
+
 ## Usage
 
 ![Screenshot](./Screenshots/screenshot.gif)
@@ -96,7 +118,9 @@ For more information on contributing to this project, another Aras Labs project,
 
 ## Credits
 
-Created by Eli Donahue. 
+Created by Eli Donahue.
+
+Modified by Christopher Gillis.
 
 Project inspired by George J. Carrette.
 
