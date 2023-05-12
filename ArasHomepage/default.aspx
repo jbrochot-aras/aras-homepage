@@ -34,9 +34,17 @@
 </head>
 
 <body>
-	<nav class="navbar navbar-toggleable-md navbar-dark bg-dark">
+	<nav class="navbar navbar-toggleable-md navbar-dark bg-dark" style="flex-direction: column;align-items: flex-start;">
 		<!-- Navbar content -->
-		<a class="navbar-brand" href="#">SERVER NAME</a>
+		 <a class="navbar-brand" href="#"> 
+			<!-- Get serverName -->
+			<%
+				//Get serverName
+				string serverName = System.Environment.MachineName;
+				//string e2 = "<a class='navbar-brand' " + serverName + "</a>";
+				Response.Write(serverName);
+			%>
+		 </a> 
 			
 		<ul class="nav justify-content-end">
 			<li class="nav-item dropdown">
