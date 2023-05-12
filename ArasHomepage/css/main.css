@@ -14,8 +14,8 @@
 /*//////////////////////////////////////////////////////////////////
 [ RESTYLE TAG ]*/
 * {
-	margin: 0px; 
-	padding: 0px; 
+	margin: 0px;
+	padding: 0px;
 	box-sizing: border-box;
 }
 
@@ -105,12 +105,10 @@ iframe {
 .container-table100 {
   width: 100%;
   min-height: 100vh;
-
   display: -webkit-box;
   display: -webkit-flex;
   display: -moz-box;
   display: -ms-flexbox;
-  display: flex;
   align-items: center;
   justify-content: center;
   flex-wrap: wrap;
@@ -188,10 +186,9 @@ tbody tr:hover {
 }
 
 .column1 {
-  width: 200px;
-  padding-left: 40px;
-  max-width: 200px;
+  width: auto;
   word-wrap: break-word;
+  padding-left: 40px;
 }
 
 .column2 {
@@ -203,7 +200,7 @@ tbody tr:hover {
   padding-right: 40px;
 }
 
-@media screen and (max-width: 992px) {
+/* @media screen and (max-width: 992px) {
   table {
     display: block;
   }
@@ -255,15 +252,15 @@ tbody tr:hover {
   tbody tr {
     font-size: 14px;
   }
-}
+} */
 
-@media (max-width: 576px) {
+/* @media (max-width: 576px) {
   .container-table100 {
     padding-left: 15px;
     padding-right: 15px;
   }
 }
-
+ */
 nav a {
   color: white;
 }

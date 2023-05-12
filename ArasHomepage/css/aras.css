@@ -1,0 +1,84 @@
+
+/*//////////////////////////////////////////////////////////////////
+[ BACKGROUND PHOTO ]*/
+
+.container-table100 {
+	background-color: #FFFFFF;
+	background-position: bottom right;
+    min-height: unset;
+
+  /* background-image: url("../images/aras-logo.svg");
+  background-size: 100% */
+}
+
+.wrap-table100 {
+    width: auto;
+}
+
+.column1 {
+    padding-right: 10px;
+}
+
+.bg-dark {
+    background-color: #3C3C3C!important;
+}
+
+.navbar {
+    height: 96px;
+}
+
+.limiter {
+    display: flex;
+    height: calc(100% - 96px);
+    position: relative;
+}
+
+.logo {
+    position: absolute;
+    width: 30rem;
+    height: auto;
+    top: 0px;
+    right: 0px;
+}
+
+table {
+	border-radius: 2px;
+    border-spacing: 0;
+	background-color: #FFFFFF;
+	border-collapse: unset;
+	border-bottom: 1px solid #D6D6D6;
+	border-left: 1px solid #D6D6D6;
+	border-right: 1px solid #D6D6D6;
+}
+
+table thead tr {
+    /*height: 60px;*/
+    background: #5A5A5A;
+}
+
+/* tbody tr:nth-child(even) {
+    background-color: #D6D6D6;
+} */
+
+tbody tr {
+    color: #D6D6D6;
+  }
+
+a {
+	color: #5A5A5A;
+}
+
+a:hover {
+    color: #CC1C1C;
+    text-decoration: underline;
+  }
+
+table tbody tr:hover {
+    background-color: #FEFBD5;
+}
+
+.dropdown-item:focus, .dropdown-item:hover {
+    background-color: #FEFBD5;
+	color: #CC1C1C;
+    /* text-decoration: underline; */
+}

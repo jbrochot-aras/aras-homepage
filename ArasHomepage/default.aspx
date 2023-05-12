@@ -6,11 +6,11 @@
 <html lang="en">
 
 <head>
-	<title>Aras Installations</title>
+	<title>Aras Instances</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<!--===============================================================================================-->
-	<link rel="icon" type="image/png" href="images/icons/favicon.ico" />
+	<link rel="icon" type="image/png" href="images/icons/aras-favicon.ico" />
 	<!--===============================================================================================-->
 	<link rel="stylesheet" type="text/css" href="vendor/bootstrap/css/bootstrap.min.css">
 	<!--===============================================================================================-->
@@ -27,11 +27,9 @@
 	<!--===============================================================================================-->
 	<!-- 
 		choose or customize a stylesheet to style the page background 
-		find stylesheets in home/css/
+		find stylesheets in ArasHomepage/css/
 	-->
-	<link rel="stylesheet" type="text/css" href="css/blue-purple.css">
-	<!-- <link rel="stylesheet" type="text/css" href="css/blue-green.css">
-	<link rel="stylesheet" type="text/css" href="css/photo.css"> -->
+	<link rel="stylesheet" type="text/css" href="css/aras.css">
 	<!--===============================================================================================-->
 </head>
 
@@ -42,18 +40,23 @@
 			
 		<ul class="nav justify-content-end">
 			<li class="nav-item dropdown">
-				<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">My Links</a>
+				<a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Aras Resources</a>
 
 				<div class="dropdown-menu">
 					<!-- Build a list of secondary links to display as dropdown items -->
 					<%
-						// create a dictionary of links you want to show in the dropdown list
-						Dictionary<string,string> links_2 = new Dictionary<string,string>();
-						links_2["Subscriber Portal"] = "http://www.aras.com/SubscriberPortal/SubscriberLogon.aspx?ReturnUrl=%2fsubscriberportal%2fsupport.aspx";
-						links_2["Aras Roadmap"] = "https://www.aras.com/plm-roadmap/";
-						links_2["Aras Downloads"] = "https://www.aras.com/support/downloads/";
+						// create a dictionary of links you want to show in the aras dropdown list
+						Dictionary<string,string> links_aras = new Dictionary<string,string>();
+						links_aras["Aras Community"] = "https://community.aras.com/";
+						links_aras["Aras Community Projects"] = "https://community.aras.com/p/projects";
+						links_aras["ArasLabs Blog"] = "https://community.aras.com/aras-labs/";
+						links_aras["ArasLabs GitHub"] = "https://github.com/ArasLabs";
+						links_aras["MyInnovator"] = "https://MyInnovator.com/";
+						links_aras["Subscriber Portal"] = "http://www.aras.com/SubscriberPortal/SubscriberLogon.aspx?ReturnUrl=%2fsubscriberportal%2fsupport.aspx";
+						links_aras["Aras Roadmap"] = "https://www.aras.com/plm-roadmap/";
+						links_aras["Aras Downloads"] = "https://www.aras.com/support/downloads/";
 
-						foreach (KeyValuePair<string,string> link in links_2)
+						foreach (KeyValuePair<string,string> link in links_aras)
 						{
 							string el = "<a class='dropdown-item' href='" + link.Value + "' target='_new'>" + link.Key + "</a>";
 							Response.Write(el);
@@ -66,9 +69,11 @@
 			<%
 				// create a dictionary of links you want to show in the nav bar
 				Dictionary<string,string> links = new Dictionary<string,string>();
+				/*
 				links["MyInnovator"] = "https://MyInnovator.com/";
 				links["GitHub"] = "https://github.com/";
-				links["Labs Blog"] = "https://community.aras.com/aras-labs/";
+				links["Labs Blog"] = "http://community.aras.com/en/category/technique/aras-labs/";
+				*/
 
 				foreach (KeyValuePair<string,string> link in links)
 				{
@@ -81,13 +86,16 @@
 
 	</nav>
 	<div class="limiter">
+		<div class="logo">
+			<img src="images/aras-logo.svg">
+		</div>
 		<div class="container-table100">
 			<div class="wrap-table100">
 				<div class="table100">
 					<table>
 						<thead>
 							<tr class="table100-head">
-								<th class="column1">Innovator</th>
+								<th class="column1">Instance name</th>
 								<th class="column2">Nash</th>
 								<th class="column3">Admin</th>
 							</tr>
@@ -116,7 +124,6 @@
 													string appPath = ".." + app.Path;
 													string nashPath = appPath + "/Client/Scripts/nash.aspx";
 													string adminPath = appPath + "/?username=admin";
-
 													string row = "" +
 														"<tr class='table100-head'>" +
 														"	<td class='column1'>" +
