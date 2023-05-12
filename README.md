@@ -1,108 +1,117 @@
-# Aras Homepage
+# ArasHomePage
+
+Project forked from ArasLabs project [Aras-homepage](https://github.com/ArasLabs/aras-homepage).
 
 This project sets up a "homepage" that lists the Aras Innovator instances installed on a server. The list contains links to each instance's login page and Nash page. The homepage acts as a directory for easy access to your Aras Innovator installations.
 
-## History
-
-Release | Notes
---------|--------
-[v1.1.0](https://github.com/ArasLabs/aras-homepage/releases/tag/v1.1.0) | Added ability to populate instance list from IIS instead of folder.
-[v1.0.0](https://github.com/ArasLabs/aras-homepage/releases/tag/v1.0.0) | First release. Tested on Internet Explorer, Edge, Firefox, Chrome.
-
-#### Supported Aras Versions
-
-Project | Aras
---------|------
-[v1.1.0](https://github.com/ArasLabs/aras-homepage/releases/tag/v1.1.0) | All Aras Versions
-[v1.0.0](https://github.com/ArasLabs/aras-homepage/releases/tag/v1.0.0) | All Aras Versions
-
+The server name (displayed on the top banner) is gathered dynamically.
+The Aras instances links are gathered from IIS Applications (credits to [Chris Gillis](https://github.com/cgillis-aras)).
 
 ## Installation
 
-### Pre-requisites
-
-This project requires you to have the IIS Management Service feature enabled. You can find this under the **Turn Windows Features on or off** dialog accessible through the Control Panel.
-
-![IIS Management Service](./Screenshots/IIS_Management_Service.png)
-
 ### Install Steps
 
-1. Download the aras-homepage project.
-2. Copy the `home` folder from the project and paste it into `C:\inetpub\wwwroot` on the server.
-3. Open `home\default.aspx` for editing.
-4. Set the server name in the nav bar.
+1. Download the ArasHomePage project.
+2. Copy the `ArasHomepage` folder from the project and paste it on the server in the location where you want to store the sources of the application.
+
+3. If you have links you want to show in a dropdown list from the navigation bar, you can add them to the `links_aras` Dictionary.
 
     ```(html)
-    <!-- Navbar content -->
-    <a class="navbar-brand" href="#">SERVER NAME</a> 
+    // create a dictionary of links you want to show in the aras dropdown list
+	Dictionary<string,string> links_aras = new Dictionary<string,string>();
+	links_aras["Aras Community"] = "https://community.aras.com/";
     ```
+4. If you have links you want to show outside of the dropdown lists, you can add them in the `links` Dictionary.
 
-5. If there are any subfolders you don't want listed in the table, add them to the skip list.
+   ```(html)
+   // create a dictionary of links you want to show in the nav bar
+   Dictionary<string,string> links = new Dictionary<string,string>();
+   /*
+   links["MyInnovator"] = "https://MyInnovator.com/";
+   links["GitHub"] = "https://github.com/";
+   links["Labs Blog"] = "http://community.aras.com/en/category/technique/aras-labs/";
+   */
+   ```
 
-    ```(html)
-    // create a list of folder names you don't want listed
-    List<string> skip = new List<string>();
-    skip.Add("Aras Update");
-    ```
+5. Save the `default.aspx` file.
 
-6. If you want to customize the background style, you can choose or edit a stylesheet.
+6. Create an Application Pool dedicated to the ArasHomePage application
 
-    ```(html)
-    <!-- 
-    choose or customize a stylesheet to style the page background 
-    find stylesheets in home/css/
-    -->
-	<link rel="stylesheet" type="text/css" href="css/blue-purple.css">
-	<!-- <link rel="stylesheet" type="text/css" href="css/blue-green.css"> -->
-	<!-- <link rel="stylesheet" type="text/css" href="css/photo.css"> -->
-    ```
+   _This will avoid permission error when the page will fetch the server links from IIS applications.To do so, we specify that when you access this page, the identity to use should be the LocalSystem. It is necessary to dispose of a dedicated application pool for this to avoid impacting other applications, and for security reasons._
 
-    Tip: Here's a great site with a gallery of color gradients: [https://uigradients.com/](https://uigradients.com/).
+   _Be advised, using the LocalSystem identity to run the application grants Administrator rights to the process which executes its code, it is a potential **security breach** and **it must be addressed** (see Step #9). While on most machines the admin rights will be necessary to list the applications deployed on IIS, using the LocalSystem identity may not be required depending on the configuration of the system. Other options like Windows Authentication may be considered, especially on shared resources like servers. Please refer to the section `Security Considerations` for more information._
 
-7. If you want to show custom links in the navigation bar, you can add them to the `links` Dictionary.
+   ![create appplication pool #1](./Screenshots/create-application-pool-001.png)
+   ![create appplication pool #2](./Screenshots/create-application-pool-002.png)
 
-    ```(html)
-    // create a dictionary of links you want to show in the nav bar
-    Dictionary<string,string> links = new Dictionary<string,string>();
-    links["MyInnovator"] = "https://MyInnovator.com/";
-    ```
+   1. Open IIS Manager as admin
+   2. Under <ServerName> -> Application Pools
+   3. Select the action 'Add Application Pool' (top right of the window)
+   4. Set the new Application Pool settings:
+      1. Set a name (ie: 'ArasHomePage ASP.NET 4.0')
+      2. Set a .NET CLR version (ie: '.NET CLR Version v4.0.30319')
+      3. Set the 'Classic' option for the Managed pipeline mode
+      4. Tick the box for the option 'Start the application pool immediately'
+   5. Validate with OK button
+   6. Set the identity 'LocalSystem' for the application pool
+      1. Open the Application Pool advanced settings
+      2. Under Process Model -> Identity, select the Identity 'LocalSystem'
 
-8. If you have links you want to show in a dropdown list from the navigation bar, you can add them to the `links_2` Dictionary.
+7. Create a new application in IIS for ArasHomepage
 
-    ```(html)
-    // create a dictionary of links you want to show in the dropdown list
-    Dictionary<string,string> links_2 = new Dictionary<string,string>();
-    links_2["Aras Roadmap"] = "https://www.aras.com/plm-roadmap/";
-    ```
+   ![create web appplication](./Screenshots/create-web-application.png)
 
-9. Save the `default.aspx` file.
+   1. Open IIS Manager as Administrator
+   2. Under <ServerName> -> Sites
+   3. Right click on Sites and select the option 'Add Application...'
+   4. Set the new application settings:
+      1. Alias: 'ArasHomepage'
+      2. Application pool: the dedicated application pool you just created
+      3. Physical path: the path to the folder containing the file default.aspx of the ArasHomepage
+      4. Authentication: pass through authentication
+      5. Validate with OK button
 
-### IIS Setup
+8. Restart IIS
 
-This project queries IIS to get a list of the applications it should use to populate the links on the homepage. To avoid a permissions error, you'll need to configure IIS to use Windows Authentation with your user instead of the default IIS user.
+   After this step, you should be able to load the page in the browser of your choice
 
-1. Open the IIS Manager
-2. In the Connections tree on the left, select **Default Web Site > home**
-3. Select **Authentication** in the features view
+9. Restrict access to localhost only
 
-![IIS Authentication Menu](./Screenshots/IIS_Authentication.png)
+   ![Open the app restriction menu](./Screenshots/restrict-access-001.png)
+   ![Forbid access by default](./Screenshots/restrict-access-002.png)
+   ![Add Allow Entry for localhost](./Screenshots/restrict-access-003.png)
+   ![Add Allow Entry for localhost](./Screenshots/restrict-access-004.png)
 
-4. Set the Authentication as follows:
-   1. Anonymous Authentication : **Disabled**
-   2. ASP.NET Impersonation : **Enabled**
-   3. Forms Authentication : **Disabled**
-   4. Windows Authentication : **Enabled**
+   1. Open IIS Manager as Administrator
+   2. Select <ServerName> -> Sites -> Default Web Site -> ArasHomePage
+   3. Open the menu `IP Address and Domain Restrictions`
+   4. Forbid to for unspecified clients
+      1. From the pane on the right and side, open the menu `Edit Feature Settings...`
+      2. Set `Access for unspecified clients` to `Deny`
+      3. Set `Deny Action Type` to `Forbidden`
+      4. Validate with OK button
+   5. Add an allow rule for localhost
+      1. From the pane on the right and side, open the menu `Add Allow Entry...`
+      2. Set the address to  '127.0.0.1'
+      3. Validate with OK button
 
-![IIS Authentication Features](./Screenshots/Enable_Windows_Authentication.png);
+   Now the application is only accessible from the machine itself.
 
-> Note: With the move towards a Windows authenticated user, you may be prompted for your Windows credentials upon accessing this home page for the first time. This happend when I tested in FireFox and Edge, but did not happen when I tested in Chrome. If you keep the browser session open, you should only need to enter these credentials a single time.
+### Security Considerations
+
+The application needs to be able to list the applications deployed locally with IIS.
+That typically implies running wiht the Administrators rights on the system.
+There are a number of ways of achieving that through the authorization and authentication mechanisms provided by IIS Manager.
+
+On a Server accessible by a number of machine on a network, access restriction to the application based on Windows Authentication would seem like a good solution. Typically you could restrict the access to the application to members of the Administrators group on the Server, or members of an AD group.
+
+Though because this project is primarily intended for local development environments (meaning the PC of a developer with local Innovator instances), the preferred solution documented is to run the application with the LocalSystem identity, AND enforce strong restrictions on what machine can access the application.
 
 ## Usage
 
-![Screenshot](./Screenshots/screenshot.gif)
-*Screenshot demonstrates different custom styles. Project does not automatically rotate stylesheets.*
+![Screenshot](./Screenshots/screenshot.png)
 
-Open your browser to http://servername/home. Bookmark the url or make it your browser homepage for easy access to your server's Innovator instances.
+Open your browser to http://servername/ArasHomepage. Bookmark the url or make it your browser homepage for easy access to your server's Innovator instances.
 
 > Note: The **Login as Admin** link only works for systems configured for Windows Authentication. For all other systems, it will just bring up the login page.
 
@@ -114,20 +123,13 @@ Open your browser to http://servername/home. Bookmark the url or make it your br
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request
 
-For more information on contributing to this project, another Aras Labs project, or any Aras Community project, shoot us an email at araslabs@aras.com.
-
 ## Credits
 
-Created by Eli Donahue.
+This project was created by ArasLabs under the MIT License : available on GitHub [here](https://github.com/ArasLabs/aras-homepage)
 
-Modified by Christopher Gillis.
-
-Project inspired by George J. Carrette.
+It was originally created by [Eli Donahue](https://github.com/EliJDonahue) and inspired by George J. Carrette.
+It includes contributions from [Sam Poe](https://github.com/sampoearas) and [Chris Gillis](https://github.com/cgillis-aras).
 
 Table style is based on [this template](https://colorlib.com/etc/tb/Table_Responsive_v1/index.html).
 
-Background photos are sourced from [UnSplash](https://unsplash.com/).
-
-## License
-
-Aras Labs projects are published to Github under the MIT license. See the [LICENSE file](./LICENSE.md) for license rights and limitations.
+Background photos of additional css styles are sourced from [UnSplash](https://unsplash.com/).
