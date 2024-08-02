@@ -35,10 +35,13 @@
 
 .logo {
     position: absolute;
-    width: 30rem;
+    width: 15%;
+    min-width: 140px;
     height: auto;
     top: 0px;
     right: 0px;
+    padding-right: 1%;
+    padding-top: 1%;
 }
 
 table {
